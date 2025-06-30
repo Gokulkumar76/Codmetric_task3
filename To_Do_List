@@ -1,0 +1,59 @@
+import os
+
+FILE_NAME = "tasks.txt"
+
+# Load tasks from file
+def load_tasks():
+    tasks = []
+    if os.path.exists(FILE_NAME):
+        with open(FILE_NAME, "r") as file:
+            for line in file:
+                task, status = line.strip().split('|')
+                tasks.append({"task": task, "completed": status == "done"})
+    return tasks
+
+# Save tasks to file
+def save_tasks(tasks):
+    with open(FILE_NAME, "w") as file:
+        for t in tasks:
+            status = "done" if t["completed"] else "not_done"
+            file.write(f"{t['task']}|{status}\n")
+
+# Display tasks
+def display_tasks(tasks):
+    if not tasks:
+        print("No tasks available.")
+    else:
+        for idx, t in enumerate(tasks, 1):
+            status = "✔️" if t["completed"] else "❌"
+            print(f"{idx}. {t['task']} [{status}]")
+
+# Add task
+def add_task(tasks):
+    task = input("Enter the task description: ").strip()
+    if task:
+        tasks.append({"task": task, "completed": False})
+        print("Task added.")
+    else:
+        print("Task cannot be empty.")
+
+# Delete task
+def delete_task(tasks):
+    display_tasks(tasks)
+    try:
+        index = int(input("Enter task number to delete: "))
+        if 1 <= index <= len(tasks):
+            removed = tasks.pop(index - 1)
+            print(f"Deleted task: {removed['task']}")
+        else:
+            print("Invalid task number.")
+    except ValueError:
+        print("Please enter a valid number.")
+
+# Mark task as completed
+def mark_task_completed(tasks):
+    display_tasks(tasks)
+    try:
+        index = int(input("Enter task number to mark as completed: "))
+        if 1 <= index <= len(tasks):
+            tasks[index - 1]["completed"]()
